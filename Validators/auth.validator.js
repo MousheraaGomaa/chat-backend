@@ -1,8 +1,8 @@
-const { body } = require('express-validator');
-const { User } = require('../Models/user.model')
-const { handleValidationErrors } = require('../MiddleWares/handleValidationErrors .middleware');
-const { PHONE_REG } = require('../Utils/regular_expressions')
-const { USER_STATUSES } = require('../Utils/constants');
+import { body } from 'express-validator';
+import { User } from '../Models/user.model.js';
+import { PHONE_REG } from '../Utils/regular_expressions.js';
+import { USER_STATUSES } from '../Utils/constants';
+import { handleValidationErrors } from '../MiddleWares/handleErrors.middleware.js';
 
 const updateUserValidator = [
     

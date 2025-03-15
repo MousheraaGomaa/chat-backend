@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         maxLength: 20,
         minLength: 3,
-        reguired: true,
+        required: true,
     },
     email: {
         type: String,
@@ -22,8 +22,6 @@ const userSchema = new mongoose.Schema({
     },
     phone: {
         type: Number,
-        minLength: 11,
-        maxLength: 11,
         unique: true,
         match: PHONE_REG,
     },
@@ -44,9 +42,9 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    lastActiveDate: {
-        type: Date
-    },
+    // lastActiveDate: {
+    //     type: Date
+    // },
     avatar: String,
     job: String,
     workingHours: String
