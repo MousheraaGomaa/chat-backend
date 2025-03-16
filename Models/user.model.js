@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
 import bcrypt from 'bcryptjs';
-import { PHONE_REG, EMAIL_REG, PASSWORD_REG, CONFIRMATIONCOND } from "../Utils/regular_expressions.js";
+import {
+    PHONE_REG, EMAIL_REG,
+    PASSWORD_REG, CONFIRMATIONCOND_REG
+} from "../Utils/regular_expressions.js";
 import { USER_SATAUSES } from '../Utils/enums.js';
 
 const userSchema = new mongoose.Schema({
@@ -18,10 +21,13 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
+        minLength: 8,
+        maxLength: 12,
+        required: true,
         match: PASSWORD_REG
     },
     phone: {
-        type: Number,
+        type: String,
         unique: true,
         match: PHONE_REG,
     },
@@ -31,46 +37,35 @@ const userSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        emun: Object.values(USER_SATAUSES),
+        enum: Object.values(USER_SATAUSES),
         default: 'Offline'
     },
     confirmationCode: {
         type: Number,
-        match: CONFIRMATIONCOND
+        match: CONFIRMATIONCOND_REG
     },
     emailConfirmed: {
         type: Boolean,
         default: false
     },
-    // lastActiveDate: {
-    //     type: Date
-    // },
     avatar: String,
     job: String,
     workingHours: String
 });
 
-userSchema.pre('save', function (next) {
-
-    if (this.password.isModified()) {
-        bcrypt.genSalt(process.env.SALTROUND)
-            .then((salt)=>{
-                bcrypt.hash( this.password, salt )
-                    .then(( hashedPassword )=>{
-                        this.password =  hashedPassword;
-                    })
-                    .catch((err)=>{
-                        throw new Error(err.message);
-                    })
-            })
-            .catch((err)=>{
-                throw new Error(err.message);
-            });
+userSchema.pre('save', async function (next) {
+    try {
+        if (this.isModified('password')) {
+            const saltRounds = +process.env.SALTROUND || 10;
+            const salt = await bcrypt.genSalt(saltRounds) //why
+            this.password = await bcrypt.hash(this.password, salt);
+        }
+        next()
+    } catch (err) {
+        next(err)
     }
 })
 
 const User = mongoose.model('user', userSchema);
 
-export {
-    User
-}
+export default User;

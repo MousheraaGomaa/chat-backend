@@ -1,26 +1,31 @@
 import nodemailer from 'nodemailer'
 
+const transport = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    auth: {
+        user: process.env.CHAT_APP_EMAIL,
+        pass: process.env.CHAT_APP_PASSWORD
+    }
+});
 
-function sendEmailMessage(userEmail, subject, htmlContent) {
+async function sendEmailMessage(userEmail, subject, htmlTemplate) {
     try {
         const options = {
             from: `'Aura 🌌 '<${process.env.CHAT_APP_EMAIL}>`,
             to: userEmail,
             subject: subject,
-            html: htmlContent
+            html: htmlTemplate
         }
-        const transport = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: false,
-            auth: {
-                user: process.env.CHAT_APP_EMAIL,
-                pass: process.env.CHAT_APP_PASSWORD
-            }
-        });
-        return transport.sendMail(options);
+        const info = await transport.sendMail(options);
+        return info;
     } catch (err) {
-       return  Promise.reject(err.message)
+        throw new Error('Failed to send email')
     }
 }
+
+
+
+
 export default sendEmailMessage;
