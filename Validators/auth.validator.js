@@ -1,5 +1,5 @@
 import { body } from 'express-validator';
-import { User } from '../Models/user.model.js';
+import User from '../Models/user.model.js';
 import { EMAIL_REG, PASSWORD_REG } from '../Utils/regular_expressions.js';
 import { handleValidationErrors } from '../MiddleWares/handleErrors.middleware.js';
 
@@ -19,17 +19,18 @@ const createPasswordChain = () => {
         .withMessage('Passwords must contain at least one upper case letter, number, and special character');
 }
 const checkUniquenessChain = (property, { onSuccess, onFailure }) => {
+
     onSuccess = onSuccess?onSuccess:() =>(true);
     onFailure = onFailure?onFailure:() =>(true);
 
     return body(property)
-        .custom(async (prop) => {
-            const user = await User.findOne({ prop });
+        .custom(async ( email ) => {
+            const user = await User.findOne({ email });
             if (!user) {
                 onFailure();
             }
             else {
-                onSuccess() ;
+                onSuccess();
             }
         });
 }
@@ -49,13 +50,12 @@ const registerValidator = [
     body('name')
         .trim()
         .notEmpty().withMessage('Name is required')
-        .matches(EMAIL_REG).withMessage('Invaild Email Format')
         .isLength({ min: 3, max: 20 }).withMessage('Name must be between 3 to 20 charactars long'),
     // Email Validation 
     createEmailChain(),
     // check email uniqueness
     checkUniquenessChain('email', {
-        onSuccess: throwError('Email exists already'),
+        onSuccess: throwError('Email exists already')
     }),
     // check  password
     createPasswordChain(),

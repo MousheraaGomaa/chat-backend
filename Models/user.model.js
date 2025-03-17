@@ -4,7 +4,7 @@ import {
     PHONE_REG, EMAIL_REG,
     PASSWORD_REG, CONFIRMATIONCOND_REG
 } from "../Utils/regular_expressions.js";
-import { USER_SATAUSES } from '../Utils/enums.js';
+import { USER_STATUSES } from '../Utils/enums.js';
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: Object.values(USER_SATAUSES),
+        enum: Object.values(USER_STATUSES),
         default: 'Offline'
     },
     confirmationCode: {

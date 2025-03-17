@@ -1,8 +1,8 @@
 import { validationResult } from "express-validator";
 
 const groupErrorsByField = (errorList) => (
-    errorList.reduce((acc, { path, Msg }) => {
-        (acc[path] ||= []).push(Msg);
+    errorList.reduce((acc, { path, msg }) => {
+        (acc[path] ||= []).push(msg);
         return acc;
     }, {
 

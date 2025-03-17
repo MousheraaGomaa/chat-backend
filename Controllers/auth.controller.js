@@ -9,17 +9,27 @@ const register = async (req, res) => {
     try {
         const { name, email, password } = matchedData(req);
         const user = new User({ name, email, password });
-        User.save().then((createdUser) => {
+        user.save().then((createdUser) => {
 
-            const token = jwt.sign({ id: createdUser._id }, process.env.VERIFYEMAILSECRET, { expiresIn: '48h' });
+            const token = jwt.sign(
+                {
+                    id: createdUser._id
+                },
+                process.env.VERIFYEMAILSECRET,
+                {
+                    expiresIn: process.env.VERIFYEMAILEXPIRESIN
+                });
             const verifyEmailLink = `${req.protocol}://${req.get('host')}/auth/confirmEmail/${token}`;
             const htmlTemplate = verifyEmailTemplate(verifyEmailLink);
-            sendEmailMessage(createdUser.email, 'Verify Email Address')
+            sendEmailMessage(createdUser.email, 'Verify Email Address', htmlTemplate)
                 .then((info) => {
                     res.status(200).json({ message: 'Email sent successfully! Please check your inbox to verify your email.' })
                 }).catch((err) => {
-                    res.status(500).json({ message: 'Registration failed,Invaild email and please try again', error: error.message });
-                    createdUser.remove()
+                    res.status(500).json({
+                        message: 'The registration failed because the email was not valid. Please try again .',
+                        error: err.message
+                    });
+                    // createdUser.remove()
                 })
 
         }).catch(() => {

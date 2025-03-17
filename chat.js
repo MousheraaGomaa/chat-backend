@@ -9,13 +9,14 @@ import connectToDB from './Database/database.js';
 import authRouter from './Routes/auth.route.js';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 //make assets as public folder
-app.use(express.static(path.join(__dirname,'./assets')));
+// app.use(express.static(path.join(__dirname,'./assets')));
+app.use("/assets",express.static('public/assets'));
 // bosy parsing
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
@@ -24,7 +25,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 connectToDB();
 
 //routes
-app.use(`${process.env.BASE_URL}/auth`, authRouter )
+app.use(`/api/v1/users/auth`, authRouter )
 
 
 // global error handler

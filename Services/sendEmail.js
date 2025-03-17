@@ -21,7 +21,7 @@ async function sendEmailMessage(userEmail, subject, htmlTemplate) {
         const info = await transport.sendMail(options);
         return info;
     } catch (err) {
-        throw new Error('Failed to send email')
+        throw new Error(err.message)
     }
 }
 
