@@ -44,7 +44,7 @@ const userSchema = new mongoose.Schema({
         type: Number,
         match: CONFIRMATIONCOND_REG
     },
-    emailConfirmed: {
+    confirmed: {
         type: Boolean,
         default: false
     },
