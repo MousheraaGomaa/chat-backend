@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import bcrypt from 'bcryptjs';
 import {
     PHONE_REG, EMAIL_REG,
-    PASSWORD_REG, CONFIRMATIONCOND_REG
+    PASSWORD_REG, CODE_REG
 } from "../Utils/regular_expressions.js";
 import { USER_STATUSES } from '../Utils/enums.js';
 
@@ -41,8 +41,18 @@ const userSchema = new mongoose.Schema({
         default: 'Offline'
     },
     confirmationCode: {
-        type: Number,
-        match: CONFIRMATIONCOND_REG
+        type: String,
+        match: CODE_REG
+    },
+    confirmExpire:{
+        type:Date
+    },
+    resetPasswordCode: {
+        type: String,
+        match: CODE_REG
+    },
+    resetExpire:{
+        type:Date
     },
     confirmed: {
         type: Boolean,

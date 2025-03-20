@@ -1,8 +1,6 @@
 import express from 'express';
 import'dotenv/config';
-// import  path ,{ dirname } from 'path';
 import bodyParser from 'body-parser';
-// import { fileURLToPath } from 'url';
 import connectToDB from './Database/database.js';
 //routes
 import authRouter from './Routes/auth.route.js';
@@ -10,11 +8,6 @@ import authRouter from './Routes/auth.route.js';
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = dirname(__filename);
-
-//make assets as public folder
-// app.use(express.static(path.join(__dirname,'./assets')));
 
 // bosy parsing
 app.use(bodyParser.json());

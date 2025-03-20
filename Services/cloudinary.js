@@ -7,29 +7,29 @@ import { v2 as cloudinary } from 'cloudinary';
     api_secret: process.env.CLOUDINARYAPISECRET 
 });
 
-// async function upload() {
+async function upload() {
 
    
-//     // Upload an image
-//      const uploadResult = await cloudinary.uploader
-//        .upload(
-//            './public/assets/verify-email.svg', {
-//                folder:'users/auth',
-//                fetch_format:'auto',
-//                quality:'auto',
-//                crop:"auto",
-//                gravity:'auto',
-//                width:500,
-//                height:500
+    // Upload an image
+     const uploadResult = await cloudinary.uploader
+       .upload(
+           './public/assets/logo.png', {
+               folder:'users/auth',
+               fetch_format:'auto',
+               quality:'auto',
+            //    crop:"auto",
+            //    gravity:'auto',
+            //    width:500,
+            //    height:500
 
-//            }
-//        )
-//        .catch((error) => {
-//            console.log(error);
-//        });
+           }
+       )
+       .catch((error) => {
+           console.log(error);
+       });
     
-//     console.log(uploadResult);
-// }
+    console.log(uploadResult);
+}
 function cloudinaryUpload( fileBuffer, type ,path ){
     return new Promise((resolve, reject)=>{
         cloudinary.uploader.upload_stream({
@@ -47,3 +47,4 @@ function cloudinaryUpload( fileBuffer, type ,path ){
 }
 
 export default cloudinaryUpload;
+export { upload }

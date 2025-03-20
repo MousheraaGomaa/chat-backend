@@ -1,6 +1,6 @@
-import { body } from 'express-validator';
+import { body, params } from 'express-validator';
 import User from '../Models/user.model.js';
-import { EMAIL_REG, PASSWORD_REG } from '../Utils/regular_expressions.js';
+import { CODE_REG, EMAIL_REG, PASSWORD_REG } from '../Utils/regular_expressions.js';
 import { handleValidationErrors } from '../MiddleWares/handleErrors.middleware.js';
 
 const createEmailChain = () => {
@@ -18,7 +18,8 @@ const createPasswordChain = () => {
         .matches(PASSWORD_REG)
         .withMessage('Passwords must contain at least one upper case letter, number, and special character');
 }
-const checkUniquenessChain = (property, { onSuccess, onFailure }) => {
+
+const checkIfExistsChain = (property, { onSuccess, onFailure }) => {
 
     onSuccess = onSuccess?onSuccess:() =>(true);
     onFailure = onFailure?onFailure:() =>(true);
@@ -54,7 +55,7 @@ const registerValidator = [
     // Email Validation 
     createEmailChain(),
     // check email uniqueness
-    checkUniquenessChain('email', {
+    checkIfExistsChain('email', {
         onSuccess: throwError('Email exists already')
     }),
     // check  password
@@ -78,8 +79,8 @@ const registerValidator = [
 const loginValidator = [
     // Email Validation 
     createEmailChain(),
-    // check email uniqueness
-    checkUniquenessChain('email', {
+    // check email existence
+    checkIfExistsChain('email', {
         onFailure: throwError('Email not found')
     }),
     //validate password  (chain function)
@@ -90,19 +91,48 @@ const loginValidator = [
 
 const forgetPasswordValidator = [
     // Email Validation 
-     createEmailChain(),
-    // check email uniqueness
-    checkUniquenessChain('email', {
+    createEmailChain(),
+    // check email existence
+    checkIfExistsChain('email', {
         onFailure: throwError('Email not found')
     }),
     //Middleware to handle Express validation errors
     handleValidationErrors
 ]
+const resetPasswordByTokenValidator = [
+    //check token exists
+    params('token')
+        .notEmpty().withMessage('Token is required'),
+    //validate password
+    createPasswordChain(),
 
+    //Middleware to handle Express validation errors
+    handleValidationErrors
+]
+
+const resetPasswordByCodeValidator = [
+
+    //validate email
+    createEmailChain(),
+    //check email existence
+    checkIfExistsChain('email', {
+        onFailure: throwError('Email not found')
+    }),
+    //validate password
+    createPasswordChain(),
+    //validate code
+    body('code')
+        .notEmpty().withMessage('Code is require')
+        .matches(CODE_REG).withMessage('The code must be eight digits long'),
+    //Middleware to handle Express validation errors
+    handleValidationErrors
+]
 
 
 export {
     loginValidator,
     registerValidator,
-    forgetPasswordValidator
+    forgetPasswordValidator,
+    resetPasswordByTokenValidator,
+    resetPasswordByCodeValidator
 }
