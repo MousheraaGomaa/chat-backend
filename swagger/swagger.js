@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 
 const swaggerDocument = YAML.load(`${__dirname}/swaggerDoc.yml`);
 const generateSwaggerApiDoc = (app) => {
-    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+    app.use('/api/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 }
 
 export default  generateSwaggerApiDoc;
