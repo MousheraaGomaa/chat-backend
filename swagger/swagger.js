@@ -1,0 +1,15 @@
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+// import swaggerDocument from './swagger.json';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const swaggerDocument = YAML.load(`${__dirname}/swaggerDoc.yml`);
+const generateSwaggerApiDoc = (app) => {
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+}
+
+export default  generateSwaggerApiDoc;

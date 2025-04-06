@@ -2,7 +2,9 @@ import express from 'express';
 import {
     registerValidator,
     loginValidator, forgetPasswordValidator,
-    resetPasswordByTokenValidator
+    resetPasswordByTokenValidator,
+    resetPasswordByCodeValidator,
+    confirmEmailByCodeValidator
 }
     from '../Validators/auth.validator.js';
 import {
@@ -18,10 +20,10 @@ const authRouter = express.Router();
 authRouter.post('/register', registerValidator, register);
 authRouter.post('/login', loginValidator, login);
 authRouter.get('/confirm-email/:token', verifyEmailByToken);
-authRouter.post('/confirm-email', verifyEmailByCode);
+authRouter.post('/confirm-email', confirmEmailByCodeValidator, verifyEmailByCode);
 authRouter.post('/resend-verification', resendVerificationEmail)
 authRouter.post('/forget-password', forgetPasswordValidator, forgetPassword);
-authRouter.get('reset-password/:token', resetPasswordByTokenValidator, resetPasswordByToken);
-authRouter.post('reset-password', resetPasswordByCodeValidator, resetPasswordByCode);
+authRouter.post('/reset-password/:token', resetPasswordByTokenValidator, resetPasswordByToken);
+authRouter.post('/reset-password', resetPasswordByCodeValidator, resetPasswordByCode);
 
 export default authRouter

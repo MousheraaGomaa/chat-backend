@@ -29,6 +29,7 @@ const userSchema = new mongoose.Schema({
     phone: {
         type: String,
         unique: true,
+        sparse: true,
         match: PHONE_REG,
     },
     about: {

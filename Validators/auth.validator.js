@@ -1,4 +1,4 @@
-import { body, params } from 'express-validator';
+import { body } from 'express-validator';
 import User from '../Models/user.model.js';
 import { CODE_REG, EMAIL_REG, PASSWORD_REG } from '../Utils/regular_expressions.js';
 import { handleValidationErrors } from '../MiddleWares/handleErrors.middleware.js';
@@ -54,11 +54,11 @@ const registerValidator = [
         .isLength({ min: 3, max: 20 }).withMessage('Name must be between 3 to 20 charactars long'),
     // Email Validation 
     createEmailChain(),
-    // check email uniqueness
+    // // check email uniqueness
     checkIfExistsChain('email', {
         onSuccess: throwError('Email exists already')
     }),
-    // check  password
+    // // check  password
     createPasswordChain(),
     // check confirm password
     body('confirmPassword')
@@ -85,6 +85,8 @@ const loginValidator = [
     }),
     //validate password  (chain function)
     createPasswordChain(),
+    body('rememberMe')
+        .isBoolean().withMessage('RememberMe must be boolean'),
     //Middleware to handle Express validation errors
     handleValidationErrors
 ]
@@ -94,15 +96,15 @@ const forgetPasswordValidator = [
     createEmailChain(),
     // check email existence
     checkIfExistsChain('email', {
-        onFailure: throwError('Email not found')
+        onFailure: throwError('User not found')    // remove this check
     }),
     //Middleware to handle Express validation errors
     handleValidationErrors
 ]
 const resetPasswordByTokenValidator = [
     //check token exists
-    params('token')
-        .notEmpty().withMessage('Token is required'),
+    // param('token')
+    //     .notEmpty().withMessage('Token is required'),
     //validate password
     createPasswordChain(),
 
@@ -128,11 +130,27 @@ const resetPasswordByCodeValidator = [
     handleValidationErrors
 ]
 
+const confirmEmailByCodeValidator = [
+
+    //validate email
+    createEmailChain(),
+    //check email existence
+    checkIfExistsChain('email', {
+        onFailure: throwError('In-valid Email')
+    }),
+    //validate code
+    body('code')
+        .notEmpty().withMessage('Code is require')
+        .matches(CODE_REG).withMessage('The code must be eight digits long'),
+    //Middleware to handle Express validation errors
+    handleValidationErrors
+]
 
 export {
     loginValidator,
     registerValidator,
     forgetPasswordValidator,
     resetPasswordByTokenValidator,
-    resetPasswordByCodeValidator
+    resetPasswordByCodeValidator,
+    confirmEmailByCodeValidator
 }

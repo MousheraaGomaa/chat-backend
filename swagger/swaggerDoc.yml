@@ -1,0 +1,389 @@
+openapi: 3.0.4
+info:
+  title: Chat app API based on socket IO 
+  description: The Chat API enables real-time messaging between users, supporting features such as: 
+            Sending and receiving messages,Storing last message & timestamp per conversation,
+            Tracking unseen message count per user,Fetching user list with last message preview,
+            Supporting different message types (text, image, etc.)
+tags:
+  - name: auth
+    description: Endpoints used for user registration, login, logout,forget password,confirm email,resend verification code, reset password and token verification. 
+  - name: users
+    description: Endpoints used for update user profile, get all users with last message and number of unseen messages
+  - name: messages
+    description: Endpoints used for add new message ,get message for user ,supporting different message types (text, image, etc.)
+
+paths: 
+  /api/v1/users/auth/register:
+    post:
+      tags:
+        - auth
+      summary: Registration endpoint 
+      description: Registration endpoint using name, password, email, and confirmation password
+      requestBody: 
+        content: 
+          application/json:
+            schema:
+              $ref: '#/components/schemas/registration'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/registration'
+        required: true  
+      responses:
+        '200':
+          description: Successful registration and confirmation email sent.
+        '422':
+          description: Invalid Data
+        '404':
+          description: Email failed to be sent ,may be wrong email.Please try again.
+        '503':
+          description: Registration failed,please try again later
+        '500':
+          description: Something went wrong
+
+  /api/v1/users/auth/login:
+    post:
+      tags:
+        - auth
+      summary: login endpoint 
+      description: loign endpoint using name, password, email, and confirmation password
+      requestBody: 
+        content: 
+          application/json:
+            schema:
+              $ref: '#/components/schemas/login'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/login'
+        required: true  
+      responses:
+        '200':
+          description: Login Success, token set in cookie
+        '422':
+          description: Invalid Data 
+        '400':
+          description: confirm your email or may be In-valid Email or Password.
+        '500':
+          description: Something went wrong
+
+  /api/v1/users/auth/confirm-email:
+    post:
+      tags:
+        - auth
+      summary: Confirm email endpoint 
+      description: Confirm email using code
+      requestBody: 
+        content: 
+          application/json:
+            schema:
+              $ref: '#/components/schemas/confirmEmail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/confirmEmail'
+        required: true  
+      responses:
+        '200':
+          description: Your email has been confirmed successfully, please log in.
+        '422':
+          description: Invalid Data
+        '400':
+          description: Your Email Already Confirmed or In-valid Code.
+        '500':
+          description: Something went wrong
+
+  /api/v1/users/auth/confirm-email/{token}:
+    get:
+      tags:
+        - auth
+      summary: Confirm email endpoint 
+      description: Confirm email using token
+      parameters: 
+        - name: token
+          in: path
+          description: An email confirmation link is sent with a token in the url
+          required: true
+      responses:
+        '200':
+          description: Your email has been confirmed successfully, please log in.
+        '400':
+          description: Your Email Already Confirmed or In-valid token.
+        '404':
+          description: The token contains an invalid User ID
+        '500':
+          description: Something went wrong
+
+  /api/v1/users/auth/resend-verification:
+    post:
+      tags:
+        - auth
+      summary: Resend verification email endpoint 
+      description: Send a new verification email to confirm the email contains a link and code
+      requestBody: 
+        content: 
+          application/json:
+            schema:
+              $ref: '#/components/schemas/resendVerificationEmail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/resendVerificationEmail'
+        required: true  
+      responses:
+        '200':
+          description: Email sent successfully! Please check your inbox.
+        '404':
+          description: In-Valid User Email or Email already confirmed,Please Login.
+        '500':
+          description: Something went wrong
+
+  /api/v1/users/auth/forget-password:
+    post:
+      tags:
+        - auth
+      summary: Forget password endpoint 
+      description: Send a email to reset password the email contains a link and code
+      requestBody: 
+        content: 
+          application/json:
+            schema:
+              $ref: '#/components/schemas/forgetPassword'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/forgetPassword'
+        required: true  
+      responses:
+        '200':
+          description: Email sent successfully! Please check your inbox to reset password.
+        '404':
+          description: User not found or Email failed to be sent.
+        '422':
+          description: User not found
+        '500':
+          description: Something went wrong
+
+  /api/v1/users/auth/reset-password/{token}:
+    post:
+      tags:
+        - auth
+      summary: Reset password endpoint 
+      description: Reset password using token
+      parameters: 
+        - name: token
+          in: path
+          description: An Reset password link is sent with a token in the url
+          required: true
+      responses:
+        '200':
+          description: Password Updated Successfully!!.
+        '400':
+          description: Your token has expired or Invalid token signature.
+        '404':
+          description: User Not Found
+        '422':
+          description:  Invalid Password 
+        '500':
+          description: Something went wrong
+
+  /api/v1/users/auth/reset-password:
+    post:
+      tags:
+        - auth
+      summary: Reset password endpoint 
+      description: Reset password using code
+      requestBody: 
+        content: 
+          application/json:
+            schema:
+              $ref: '#/components/schemas/resetPassword'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/resetPassword'
+        required: true  
+      responses:
+        '200':
+          description: Password Updated Successfully!!.
+        '400':
+          description: The update failed. the code had expired.
+        '404':
+          description: User Not Found
+        '422':
+          description:  Invalid Data (passord or email or code)
+        '500':
+          description: Something went wrong
+
+  /api/v1/users:
+     get:
+      tags:
+        - users
+      summary: Get all users endpoint 
+      description: The number of unseen messages and last message of each user available for chatting
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: get all users.
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/userWithLastMessage'
+        '400':
+          description: Confirm Your Email First or Invalid Token".
+        '401':
+          description: In-valid Header Token
+        '404':
+          description: User Not Found
+        '500':
+          description: Something went wrong
+  /api/v1/users:
+     patch:
+      tags:
+        - users
+      summary: update user profile endpoint 
+      description: update user profile 
+      security:
+        - bearerAuth: []
+      requestBody: 
+        content: 
+          multipart/form-data::
+            schema:
+              $ref: '#/components/schemas/user'
+        required: true  
+      responses:
+        '200':
+          description: get all users.
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/user'
+        '400':
+          description: Confirm Your Email First or Invalid Token".
+        '401':
+          description: In-valid Header Token
+        '404':
+          description: User Not Found
+        '500':
+          description: Something went wrong
+
+components:
+  schemas: 
+    registration: 
+      type: object
+      required:
+        - name
+        - email
+        - password
+        - confirmPassword 
+      properties: 
+        name:
+          type: string
+          example: ali
+        email:
+          type: string
+          example: 'ali.gamal@gmail.com'
+        password:
+          type: string
+          example: '@Ali2009'
+        confirmPassword: 
+          type: string
+          example: '@Ali2009'
+    login: 
+      type: object
+      required:
+        - email
+        - password
+        - rememberMe
+      properties:
+        email:
+          type: string
+          example: 'ali.gamal@gmail.com'
+        password:
+          type: string
+          example: '@Ali2009'
+        rememberMe: 
+          type: boolean
+          example: false
+    confirmEmail: 
+      type: object
+      required:
+        - email
+        - code
+      properties:
+        email:
+          type: string
+          example: 'ali.gamal@gmail.com'
+        code:
+          type: string
+          example: '87654321'
+
+    resendVerificationEmail: 
+      type: object
+      required: 
+        - email
+      properties: 
+        email:
+          type: string
+          format: email
+          example: 'ali.gamal@gmail.com'
+    forgetPassword: 
+      type: object
+      required: 
+        - email
+      properties: 
+        email:
+          type: string
+          format: email
+          example: 'ali.gamal@gmail.com'
+    resetPassword: 
+      type: object
+      required:
+        - email
+        - code
+        - password
+      properties:
+        email:
+          type: string
+          example: 'ali.gamal@gmail.com'
+        code:
+          type: string
+          example: '87654321'
+        password:
+          type: string
+          example: '@Ali2009'
+    userWithLastMessage: 
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 'ali.gamal@gmail.com'
+        name:
+          type: string
+          example: '87654321'
+        status:
+          type: string
+          example: '@Ali2009'
+        avatar:
+          type: string
+          example: link for image in cloudinary
+        chatSummary:
+          type: object
+          properties:
+            lastMessage:
+              type: string
+              example: hello every one or link of image
+            messageType:  
+              type: string
+              example: text
+            lastMessageDate:
+              type: string
+              example: 2025-04-05T17:00:39.240Z
+            unseenMsgCount:
+              type: number
+              example: 2
+  securitySchemes:
+    bearerAuth: 
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

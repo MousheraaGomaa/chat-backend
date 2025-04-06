@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { MESSAGE_TYPES } from "../Utils/enums.js";
+
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const messageSchema = new mongoose.Schema({
@@ -9,23 +10,27 @@ const messageSchema = new mongoose.Schema({
     },
     messageType:{
         type: String,
+        default:'text',
         emun: Object.values(MESSAGE_TYPES)
     },
-    reciverId:{
+    // filePublicId:{
+    //     type:String
+    // },
+    receiverId:{
         type : ObjectId,
-        require:true
+        ref:'User',
+        required:true
     },
     senderId:{
         type: ObjectId,
+        ref:'User',
         required: true
     },
     deleted:{
         type: Boolean,
         default: false
     }
-},{
-    timeStamps: true
-})
+} ,{ timestamps: true });
 
 
 const Message = mongoose.model( 'message', messageSchema );

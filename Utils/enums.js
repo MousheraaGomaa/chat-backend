@@ -8,10 +8,10 @@ const USER_STATUSES = Object.freeze({
 });
 
 const MESSAGE_TYPES = Object.freeze({
-    VIDEO: 'Video',
-    AUDIO: 'Audio',
-    TEXT: 'Text',
-    IMAGE: 'Image'
+    VIDEO: 'video',
+    AUDIO: 'audio',
+    TEXT: 'text',
+    IMAGE: 'image'
 })
 
 

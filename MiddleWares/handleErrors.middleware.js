@@ -1,12 +1,12 @@
 import { validationResult } from "express-validator";
 
-const groupErrorsByField = (errorList) => (
-    errorList.reduce((acc, { path, msg }) => {
-        (acc[path] ||= []).push(msg);
+const groupErrorsByField = (errorList) => {
+   return  errorList.reduce((acc, { path, msg }) => {
+        acc[path] = acc[path] || [];
+        acc[path].push(msg);
         return acc;
-    }, {
-
-    }))
+    }, {})
+}
 
 
 const handleValidationErrors = (req, res, next) => { 
