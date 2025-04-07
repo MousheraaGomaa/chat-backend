@@ -8,8 +8,8 @@ import { SwaggerUIBundle, SwaggerUIStandalonePreset } from 'swagger-ui-dist';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const swaggerUICss =
-  "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.3.0/swagger-ui.min.css";
+const swaggerUICss = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.20.7/swagger-ui.min.css";
+
 const options = {
 customCssUrl: swaggerUICss,
 };
