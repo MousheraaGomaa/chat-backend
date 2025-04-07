@@ -49,7 +49,7 @@ const updateProfile = async (req, res) => {
       });
     res.status(200).json({
       status: "Success",
-      message: "The user profile has been successfully updated!",
+      message: "The user profile has been successfully updated!"
     });
   } catch (err) {
     if (err instanceof AppErorr)

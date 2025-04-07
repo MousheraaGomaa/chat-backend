@@ -7,7 +7,7 @@ import { updateProfileValidator } from '../Validators/user.validator.js';
 const userRouter = express.Router();
 
 userRouter.get('/', auth, getAllUsers );
-userRouter.patch('/', auth, updateProfileValidator, multerUploadAvatar, updateProfile )
+userRouter.patch('/', auth, multerUploadAvatar, updateProfileValidator,  updateProfile )
 
 
 export default userRouter;
