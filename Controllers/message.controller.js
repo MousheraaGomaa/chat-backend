@@ -1,7 +1,10 @@
 import Message from "../Models/message.model.js";
 import { cloudinaryUpload, generateSignedUrl } from "../Services/cloudinary.js";
 import AppErorr from "../Utils/app_error.js";
-import { resetUnseenMgsCount, updateChatSummary } from "./chatSummary.controller.js";
+import {
+  resetUnseenMgsCount,
+  updateChatSummary,
+} from "./chatSummary.controller.js";
 
 const uploadFileToCloud = async (file) => {
   let type = file.mimetype.split("/")[0];
@@ -29,7 +32,8 @@ const customizeMessage = (message, userId) => {
 const createMessage = async (req, res) => {
   try {
     const senderId = req.user._id;
-    let { receiverId, content } = req.body;
+    const chatUserId = req.params.chatUserId;
+    let { content } = req.body;
 
     let type = "text";
     // filePublicID = "";
@@ -44,24 +48,20 @@ const createMessage = async (req, res) => {
     }
     const message = new Message({
       content,
-      receiverId,
+      receiverId: chatUserId,
       messageType: type,
       // filePublicId: filePublicID,
       senderId,
     });
 
     const createdMessage = await message.save();
+    const summary = await updateChatSummary(createdMessage);
     
-    const summary = await updateChatSummary( createdMessage );
-    if (!summary)
-      return res.status(201).json({
-        status: "Faild",
-        message: "Faild to update chat summary",
-        data: customizeMessage(createdMessage, senderId),
-      });
     res.status(201).json({
       status: "Success",
-      message: "Your message has been added successfully!",
+      message: `Your message has been added successfully! ${
+        !summary ? "but Faild to update chat summary" : ""
+      }`,
       data: customizeMessage(createdMessage, senderId),
     });
   } catch (err) {

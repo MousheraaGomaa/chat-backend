@@ -7,7 +7,7 @@ import { createMessageValidator, deleteMessageValidator, getMessagesValidator } 
 const messageRouter = express.Router();
 
 messageRouter.get('/:chatUserId', auth, getMessagesValidator, getMessages )
-messageRouter.post('/', auth, multerUploadMessage, createMessageValidator, createMessage);
+messageRouter.post('/:chatUserId', auth, multerUploadMessage, createMessageValidator, createMessage);
 messageRouter.delete('/:id', auth, deleteMessageValidator, deleteMessage )
 
 

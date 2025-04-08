@@ -211,7 +211,7 @@ paths:
           description: Something went wrong
 
   /api/v1/users:
-     get:
+    get:
       tags:
         - users
       summary: Get all users endpoint 
@@ -235,8 +235,8 @@ paths:
           description: User Not Found
         '500':
           description: Something went wrong
-  /api/v1/users:
-     patch:
+    
+    patch:
       tags:
         - users
       summary: update user profile endpoint 
@@ -251,22 +251,76 @@ paths:
         required: true  
       responses:
         '200':
-          description: get all users.
+          description: user profile updated successfully.
+        '400':
+          description: Confirm Your Email First or Invalid Token".
+        '401':
+          description: In-valid Header Token
+        '422':
+          description: In-vakid Data
+        '404':
+          description: User Not Found
+        '500':
+          description: Something went wrong
+  /api/v1/message/{chatUserId}:
+    get:
+      tags:
+        - messages
+      summary: Get all user messages endpoint 
+      description: get all message between user and chat user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: get all messages.
           content: 
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/user'
+                  $ref: '#/components/schemas/message'
         '400':
           description: Confirm Your Email First or Invalid Token".
         '401':
           description: In-valid Header Token
+        '422':
+          description: In-valid params data
         '404':
           description: User Not Found
         '500':
           description: Something went wrong
-
+      
+    post:
+      tags:
+        - messages
+      summary: Create message endpoint 
+      description: Create message between user and chat user
+      security:
+        - bearerAuth: []
+      requestBody: 
+        content: 
+          multipart/form-data::
+            schema:
+              $ref: '#/components/schemas/createMessage'
+        required: true   
+      responses:
+        '201':
+          description: Your message has been added successfully!
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/message'
+        '400':
+          description: Confirm Your Email First or Invalid Token".
+        '401':
+          description: In-valid Header Token
+        '422':
+          description: In-valid params data
+        '404':
+          description: User Not Found
+        '500':
+          description: Something went wrong    
+    
 components:
   schemas: 
     registration: 
@@ -382,6 +436,60 @@ components:
             unseenMsgCount:
               type: number
               example: 2
+    user:
+      type: object
+      properties:
+        name:
+          type: string
+          example: 'ali gamal'
+        phone:
+          type: string
+          example: '01254627271'
+        status:
+          type: string
+          example: 'Busy'
+        avatar:
+          type: string
+          format: binary
+        about:
+          type: string
+          example: I'm a passionate Full-Stack Developer
+        job:
+          type: string
+          example: ux/ui
+        workingHours:
+          type: string
+          example: 9:00 AM – 5:00 PM
+    message:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 67ed6cc4722ffb20965919c6
+        content:
+          type: string
+          example: link for image,video or text
+        createdAt:
+          type: string
+          format: date
+          example: 2025-04-02T16:58:44.584Z
+        messageType:
+          type: string
+          example: text
+        isSentByMe:
+          type: boolean
+          example: true
+    createMessage: 
+      type: object
+      required:
+        - content
+      properties:
+        content:
+          oneOf:
+            - type: string
+              format: binary    # for image upload
+            - type: string
+              format: text      # for plain text
   securitySchemes:
     bearerAuth: 
       type: http

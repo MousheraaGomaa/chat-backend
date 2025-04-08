@@ -10,24 +10,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARYAPISECRET,
   secure: true,
 });
-// async function upload() {
-//   // Upload an image
-//   const uploadResult = await cloudinary.uploader
-//     .upload("./public/assets/logo.png", {
-//       folder: "users/auth",
-//       fetch_format: "auto",
-//       quality: "auto",
-//       //    crop:"auto",
-//       //    gravity:'auto',
-//       //    width:500,
-//       //    height:500
-//     })
-//     .catch((error) => {
-//       console.log(error);
-//     });
 
-//   console.log(uploadResult);
-// }
 function cloudinaryUpload(fileBuffer, type, path) {
   const options = {
           resource_type: type,

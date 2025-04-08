@@ -37,9 +37,9 @@ connectToDB();
 generateSwaggerApiDoc(app);
 
 //routes
-app.use(`/api/v1/users`, userRouter)
-app.use(`/api/v1/users/auth`, authRouter );
-app.use('/api/v1/message', messageRouter);
+app.use(`${process.env.Base_URL}/users`, userRouter)
+app.use(`${process.env.Base_URL}/users/auth`, authRouter );
+app.use(`${process.env.Base_URL}/message`, messageRouter);
 
 
 // global error handler

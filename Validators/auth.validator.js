@@ -102,9 +102,7 @@ const forgetPasswordValidator = [
     handleValidationErrors
 ]
 const resetPasswordByTokenValidator = [
-    //check token exists
-    // param('token')
-    //     .notEmpty().withMessage('Token is required'),
+   
     //validate password
     createPasswordChain(),
 
