@@ -21,8 +21,7 @@ const PORT = process.env.PORT || 5000;
 
 // Enable CORS
 app.use(cors({
-    *, // Your frontend URL
-    credentials: true,
+    * , credentials: true,
 }));
 
 // bosy parsing
