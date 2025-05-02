@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 5000;
 
 // Enable CORS
 app.use(cors({
-    origin: process.env.FRONT_URL || "http://localhost:4200", // Your frontend URL
+    *, // Your frontend URL
     credentials: true,
 }));
 
